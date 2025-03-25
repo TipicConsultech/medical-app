@@ -20,9 +20,11 @@ export default defineConfig({
   },
   
   build: {
-    outDir: 'public/build',
-    emptyOutDir: true,
-  },
+    manifest: 'manifest.json', // Ensures the manifest is created
+    outDir: 'public/build', // Output files in `public/build`
+    emptyOutDir: true, // Clears `public/build` before each build
+   
+},
   server: {
     host: '127.0.0.1',
     port: 5173,

@@ -1,9 +1,14 @@
+import { Provider } from "react-redux"
+import Products from "./pages/Products"
+import store from "./util/store"
 
 function App() {
 
   return (
     <>
-        <p className='text-7xl text-blue-300'>Medical App</p>      
+    <Provider  store={store}>
+       <Products/>
+       </Provider>
     </>
   )
 }

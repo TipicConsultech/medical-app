@@ -13,7 +13,7 @@ class ProductsController extends Controller
     // Get All Products
     public function index()
     {
-        $products = Products::paginate(2);
+        $products = Products::paginate(4);
 
         return response()->json([
             'message' => 'Products retrieved successfully',

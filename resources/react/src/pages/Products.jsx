@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import FilterModal from "../componants/FilterModel";
 import ProductsSkeleton from "../componants/skeletonLoader";
 import { getAPICall } from "../util/api";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +14,7 @@ const Products = () => {
   const [lastPage, setLastPage] = useState(1);
   const [query, setQuery] = useState("");
   const { selectedCategory } = useSelector((state) => state?.filters);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -29,6 +30,10 @@ const Products = () => {
     fetchProducts();
   }, [currentPage]);
 
+  const handleRoute = (id) => {
+    navigate(`/product/${id}`);
+  };
+
   useEffect(() => {
     let filtered = products;
     if (selectedCategory) {
@@ -42,11 +47,28 @@ const Products = () => {
     setFilteredProducts(filtered);
   }, [products, selectedCategory, query]);
 
+  function discountPrice(price,percent){
+
+    const discountedPrice = price - (price * (percent / 100));
+    return discountedPrice;
+  }
+
+  function Weights(weight,weightType,qty){
+    if(qty==1){
+      weightType == "gm"? "gram":"ml";
+      return Math.floor(weight)+" "+weightType;
+    }
+    else{
+      let str="tablets in 1 strip"
+      return qty +" " + str;
+    } 
+  }
+  
   return (
     <div className="max-w-7xl mx-auto px-6">
-      <FilterModal isOpen={isOpen} setIsOpen={setIsOpen} categories={categories} />
+      {/* <FilterModal isOpen={isOpen} setIsOpen={setIsOpen} categories={categories} /> */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        {/* <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="w-full md:w-96 relative">
             <input
               type="search"
@@ -59,7 +81,7 @@ const Products = () => {
           <button onClick={() => setIsOpen(true)} className="px-6 py-3 bg-white rounded-xl shadow-lg border">
             Filter
           </button>
-        </div>
+        </div> */}
         {filteredProducts.length === 0 ? (
           <ProductsSkeleton />
         ) : (
@@ -91,14 +113,27 @@ const Products = () => {
       
                 <div className="py-6 px-6">
                   <h2 className="text-lg font-semibold text-gray-800 truncate mb-1">
-                    {product.title}
+                    {product.title} 
                   </h2>
-                  <p className="text-sm text-gray-500 mb-3">{product.manufacturer}</p>
+                  <p className="text-sm text-gray-500 mb-3">{product.manufacturer} &nbsp; &nbsp;<span className="inline-flex items-center px-2.5 py-0.8 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{Weights(product.weight,product.weight_type,product.qty)}</span></p>
                   
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold text-gray-900">
+                    {/* <span className="text-2xl font-bold text-gray-900">
                       ${product.price}
-                    </span>
+                    </span> */}
+                    
+                    <span className="text-3xl font-bold text-gray-900">₹{discountPrice(product?.price,product.discount_percentage).toFixed(2)}</span>
+
+{product.discount_percentage > 0 && (
+<>
+<span className="text-lg text-gray-500 line-through">₹{product.price}</span>
+<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+
+      {product.discount_percentage}% OFF
+</span>
+</>
+
+)}
                     {/* <div className="flex items-center">
                       <span className="text-yellow-400 mr-1">★</span>
                       <span className="text-sm font-medium text-gray-600">
@@ -108,7 +143,7 @@ const Products = () => {
                   </div>
       
                   <button
-                    onClick={() => {console.log(hi);}
+                    onClick={() => {handleRoute(product.id)}
                     /*handleRoute(product.id)*/}
                     className="w-full py-3 px-4 bg-gradient-to-r hover:from-[#42A5F6] hover:to-[#42A5F6] text-white  font-medium from-blue-500 to-blue-800 transform hover:-translate-y-0.5 transition-all duration-200"
                   >
@@ -122,7 +157,7 @@ const Products = () => {
       </div>
       <div className="flex items-center justify-center mt-6 mb-10">
       <button
-        className={`px-3 py-2 rounded-md text-white ${
+        className={`px-3 py-2 mx-1 rounded-md text-white ${
           currentPage === 1
             ? "bg-gray-300 cursor-not-allowed"
             : "bg-blue-500 hover:bg-blue-600"
@@ -137,7 +172,7 @@ const Products = () => {
       {Array.from({ length: lastPage }, (_, i) => i + 1).map((page) => (
         <button
           key={page}
-          className={`px-3 py-2 rounded-md ${
+          className={`px-3 py-2 mx-1 rounded-md ${
             currentPage === page
               ? "bg-blue-700 text-white font-bold"
               : "bg-gray-200 hover:bg-gray-300"
@@ -150,7 +185,7 @@ const Products = () => {
 
       {/* Next Button */}
       <button
-        className={`px-3 py-2 rounded-md text-white ${
+        className={`px-3 py-2 mx-1 rounded-md text-white ${
           currentPage === lastPage
             ? "bg-gray-300 cursor-not-allowed"
             : "bg-blue-500 hover:bg-blue-600"

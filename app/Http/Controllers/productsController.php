@@ -14,13 +14,19 @@ class ProductsController extends Controller
     public function index()
     {
         $products = Products::paginate(4);
-
+    
+        // Add images for each product
+        $products->getCollection()->transform(function ($product) {
+            $product->images = productImages::where('product_id', $product->id)->pluck('src')->toArray();
+            return $product;
+        });
+    
         return response()->json([
             'message' => 'Products retrieved successfully',
             'products' => $products
         ], Response::HTTP_OK);
-        
     }
+    
 
     // Get Single Product by ID
     public function show($id)

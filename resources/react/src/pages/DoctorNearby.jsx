@@ -6,7 +6,8 @@ const DoctorCards = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSpeciality, setSelectedSpeciality] = useState('');
+  const [selectedClinic, setSelectedClinic] = useState('');
 
   const fetchDoctors = async (page = 1) => {
     try {
@@ -32,6 +33,17 @@ const DoctorCards = () => {
     fetchDoctors(currentPage);
   }, [currentPage]);
 
+  useEffect(() => {
+    let filtered = doctors;
+    if (selectedSpeciality) {
+      filtered = filtered.filter((doctor) => doctor.speciality.toLowerCase().includes(selectedSpeciality.toLowerCase()));
+    }
+    if (selectedClinic) {
+      filtered = filtered.filter((doctor) => doctor.clinic_name.toLowerCase().includes(selectedClinic.toLowerCase()));
+    }
+    setFilteredDoctors(filtered);
+  }, [selectedSpeciality, selectedClinic, doctors]);
+
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
@@ -39,32 +51,34 @@ const DoctorCards = () => {
     }
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-    if (event.target.value === '') {
-      setFilteredDoctors(doctors);
-    } else {
-      setFilteredDoctors(
-        doctors.filter((doctor) =>
-          doctor.speciality.toLowerCase().includes(event.target.value.toLowerCase()) ||
-          doctor.clinic_name.toLowerCase().includes(event.target.value.toLowerCase())
-        )
-      );
-    }
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Doctor List</h2>
-        <input
-          type="text"
-          placeholder="Search by Speciality or Clinic Name"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="p-2 border border-gray-300 rounded-lg w-full max-w-md"
-          style={{ marginTop: '10px' }}
-        />
+        <div className="flex space-x-4">
+          <select
+            value={selectedSpeciality}
+            onChange={(e) => setSelectedSpeciality(e.target.value)}
+            className="p-2 border border-gray-300 rounded-lg"
+            style={{ marginTop: '10px' }}
+          >
+            <option value="">All Specialities</option>
+            {[...new Set(doctors.map((doctor) => doctor.speciality))].map((speciality) => (
+              <option key={speciality} value={speciality}>{speciality}</option>
+            ))}
+          </select>
+          <select
+            value={selectedClinic}
+            style={{ marginTop: '10px' }}
+            onChange={(e) => setSelectedClinic(e.target.value)}
+            className="p-2 border border-gray-300 rounded-lg"
+          >
+            <option value="">All Clinics</option>
+            {[...new Set(doctors.map((doctor) => doctor.clinic_name))].map((clinic) => (
+              <option key={clinic} value={clinic}>{clinic}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredDoctors.length > 0 ? (
@@ -73,7 +87,7 @@ const DoctorCards = () => {
               key={doctor.id}
               className="group bg-white overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-400 p-6 rounded-lg"
             >
-              <h2 className="text-lg font-bold text-gray-900 mb-2">{doctor.clinic_name}</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-2 text-center">{doctor.clinic_name}</h2>
               <div className="relative h-40 overflow-hidden bg-gray-50 flex justify-center items-center">
                 {doctor.thumbnail ? (
                   <img

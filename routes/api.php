@@ -9,6 +9,7 @@ use App\Http\Controllers\CsvUploadController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\productImagesController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\CustomerLogin;
 
 // Public APIs
 Route::post('/register', [AuthController::class, 'register']);
@@ -29,7 +30,8 @@ Route::post('/productImageUpload', [productImagesController::class, 'productImag
 Route::apiResource('doctors', DoctorController::class);
 Route::get('doctors/search', [DoctorController::class, 'search']);
 
-
+//customer login
+Route::post('/customerLogin', [CustomerLogin::class, 'customerLogin']);
 
 // Secured APIs
 Route::group(['middleware' => ['auth:sanctum']], function() {

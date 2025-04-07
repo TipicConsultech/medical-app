@@ -8,6 +8,7 @@ use App\Http\Controllers\FileUpload;
 use App\Http\Controllers\CsvUploadController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\productImagesController;
+use App\Http\Controllers\DoctorController;
 
 // Public APIs
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,6 +23,12 @@ Route::post('/fileUpload', [FileUpload::class, 'fileUpload']);
 Route::post('/multiFileUpload', [FileUpload::class, 'filesUpload']);
 Route::post('/deleteFile', [FileUpload::class, 'deleteFile']);
 Route::post('/productImageUpload', [productImagesController::class, 'productImageUpload']);
+
+
+// Doctors 
+Route::apiResource('doctors', DoctorController::class);
+Route::get('doctors/search', [DoctorController::class, 'search']);
+
 
 
 // Secured APIs

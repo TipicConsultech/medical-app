@@ -4,6 +4,7 @@ import store from "./util/store"
 import { HashRouter, Route, Routes } from "react-router-dom"
 import ProductDetail from "./pages/ProductDetails"
 import Navbar from "./componants/Navbar"
+import DoctorNearby from "./pages/DoctorNearby"
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Routes>
         <Route path="/" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail/>} />
+        <Route path="/nearbyDoctors" element={<DoctorNearby/>} />
         </Routes>
       
        </HashRouter>

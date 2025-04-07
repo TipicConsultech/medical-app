@@ -9,6 +9,7 @@ use App\Http\Controllers\CsvUploadController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\productImagesController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\CategoryController;
 
 // Public APIs
 Route::post('/register', [AuthController::class, 'register']);
@@ -29,6 +30,8 @@ Route::post('/productImageUpload', [productImagesController::class, 'productImag
 Route::apiResource('doctors', DoctorController::class);
 Route::get('doctors/search', [DoctorController::class, 'search']);
 
+//Category
+Route::apiResource('categories', CategoryController::class);
 
 
 // Secured APIs

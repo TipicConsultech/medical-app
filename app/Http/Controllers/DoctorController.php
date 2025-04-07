@@ -9,10 +9,9 @@ use Illuminate\Support\Facades\Validator;
 
 class DoctorController extends Controller
 {
-    
     public function index()
     {
-        $doctors = Doctor::paginate(10);
+        $doctors = Doctor::paginate(8);
 
         return response()->json([
             'message' => 'Doctors retrieved successfully',
@@ -20,7 +19,6 @@ class DoctorController extends Controller
         ], Response::HTTP_OK);
     }
 
-    
     public function show($id)
     {
         $doctor = Doctor::find($id);
@@ -35,7 +33,6 @@ class DoctorController extends Controller
         ], Response::HTTP_OK);
     }
 
-    
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -84,7 +81,6 @@ class DoctorController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    // Update an existing doctor
     public function update(Request $request, $id)
     {
         $doctor = Doctor::find($id);
@@ -105,11 +101,14 @@ class DoctorController extends Controller
         ]);
 
         if ($validator->fails()) {
+            \Log::error('Doctor update validation failed', $validator->errors()->toArray()); // optional debug
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()
             ], Response::HTTP_BAD_REQUEST);
         }
+
+        $data = $validator->validated();
 
         // Handle new thumbnail upload
         if ($request->hasFile('thumbnail')) {
@@ -121,7 +120,6 @@ class DoctorController extends Controller
                 mkdir($destinationPath, 0777, true);
             }
 
-            // Delete old thumbnail if exists
             if ($doctor->thumbnail) {
                 $oldImagePath = public_path(parse_url($doctor->thumbnail, PHP_URL_PATH));
                 if (file_exists($oldImagePath)) {
@@ -130,13 +128,23 @@ class DoctorController extends Controller
             }
 
             if ($file->move($destinationPath, $filename)) {
-                $thumbnailPath = asset('img/doctors/' . $filename);
-                $doctor->thumbnail = $thumbnailPath;
+                $data['thumbnail'] = asset('img/doctors/' . $filename);
             }
         }
 
-        // Update doctor details
-        $doctor->update($validator->validated());
+        // Manually assign values if present in validated data
+        $fields = [
+            'name', 'clinic_name', 'speciality', 'education',
+            'mobile', 'address', 'morning_time', 'evening_time', 'thumbnail'
+        ];
+
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $data)) {
+                $doctor->$field = $data[$field];
+            }
+        }
+
+        $doctor->save();
 
         return response()->json([
             'message' => 'Doctor updated successfully',
@@ -144,7 +152,6 @@ class DoctorController extends Controller
         ], Response::HTTP_OK);
     }
 
-    // Delete a doctor
     public function destroy($id)
     {
         $doctor = Doctor::find($id);
@@ -152,7 +159,6 @@ class DoctorController extends Controller
             return response()->json(['message' => 'Doctor not found'], Response::HTTP_NOT_FOUND);
         }
 
-        // Delete the thumbnail file
         if ($doctor->thumbnail) {
             $oldImagePath = public_path(parse_url($doctor->thumbnail, PHP_URL_PATH));
             if (file_exists($oldImagePath)) {
@@ -165,7 +171,6 @@ class DoctorController extends Controller
         return response()->json(['message' => 'Doctor deleted successfully'], Response::HTTP_OK);
     }
 
-    // Search doctors by name, clinic, or speciality
     public function search(Request $request)
     {
         $query = $request->q;
@@ -182,4 +187,3 @@ class DoctorController extends Controller
         return response()->json($doctors);
     }
 }
-

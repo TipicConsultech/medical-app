@@ -10,9 +10,11 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\productImagesController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\CategoryController;
-=======
 use App\Http\Controllers\CustomerLogin;
->>>>>>> 8d32bbd67340dbfc2246578fb92e3bfa463ecb9e
+use App\Http\Controllers\CartController;
+
+Route::apiResource('cart', CartController::class);
+
 
 // Public APIs
 Route::post('/register', [AuthController::class, 'register']);
@@ -33,14 +35,11 @@ Route::post('/productImageUpload', [productImagesController::class, 'productImag
 Route::apiResource('doctors', DoctorController::class);
 Route::get('doctors/search', [DoctorController::class, 'search']);
 
-<<<<<<< HEAD
 //Category
 Route::apiResource('categories', CategoryController::class);
 
-=======
 //customer login
 Route::post('/customerLogin', [CustomerLogin::class, 'customerLogin']);
->>>>>>> 8d32bbd67340dbfc2246578fb92e3bfa463ecb9e
 
 // Secured APIs
 Route::group(['middleware' => ['auth:sanctum']], function() {

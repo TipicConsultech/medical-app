@@ -6,6 +6,7 @@ import ProductDetail from "./pages/ProductDetails"
 import Navbar from "./componants/Navbar"
 import DoctorNearby from "./pages/DoctorNearby"
 import CustomerLogin from "./pages/CustomerLogin"
+import Cart from "./pages/Cart"
 
 function App() {
 
@@ -22,8 +23,8 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail/>} />
         <Route path="/nearbyDoctors" element={<DoctorNearby/>} />
         <Route path="/login" element={<CustomerLogin/>} />
+        <Route path="/cart" element={<Cart/>} />
         </Routes>
-      
        </HashRouter>
        </Provider>
        

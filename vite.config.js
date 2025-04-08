@@ -5,6 +5,7 @@ import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+
   plugins: [
     laravel({
       input: 'resources/react/src/main.jsx', // ✅ Correct entry point
@@ -23,6 +24,9 @@ export default defineConfig({
     manifest: 'manifest.json', // Ensures the manifest is created
     outDir: 'public/build', // Output files in `public/build`
     emptyOutDir: true, // Clears `public/build` before each build
+    rollupOptions: {
+      input: 'resources/react/src/main.jsx',
+  },
    
 },
   server: {

@@ -4,9 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class CartController extends Controller
 {
+    
+
+public function hasScheduleH()
+{
+    $customer_id = Auth::user()->id;
+    // Check if any cart item for this customer has a schedule_h product
+      $hasScheduleH = cart::where('customer_id', $customer_id)
+        ->whereHas('product', function ($query) {
+            $query->where('schedule_h', true);
+        })
+        ->exists();
+
+    return response()->json(['prescription' => $hasScheduleH]);
+}
+
     public function index(Request $request)
 {
     $customerId = $request->query('customer_id');

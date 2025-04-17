@@ -12,9 +12,19 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerLogin;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\preOrderController;
+use App\Http\Controllers\addressController;
+Route::get('address/{customer_id}',[addressController::class,'getByCustomerId']);
+Route::post('address',[addressController::class,'store']);
+Route::post('newAddressPreorder',[preOrderController::class,'storeWithAddress']);
+Route::get('getOrderById/{order_id}',[preOrderController::class,'getOrderById']);
+Route::get('/orders/details/{order_id}',[preOrderController::class,'getOrderDetailsByOrderId']);
+Route::get('/preorders/pending',[preOrderController::class,'getPendingOrders']);
 
 Route::apiResource('cart', CartController::class);
-
+Route::apiResource('preorder', preOrderController::class);
+// Route::get('proceedToPay',[CartController::class,'hasScheduleH']);
+Route::middleware('auth:sanctum')->get('/proceedToPay', [CartController::class, 'hasScheduleH']);
 
 // Public APIs
 Route::post('/register', [AuthController::class, 'register']);
@@ -29,7 +39,6 @@ Route::post('/fileUpload', [FileUpload::class, 'fileUpload']);
 Route::post('/multiFileUpload', [FileUpload::class, 'filesUpload']);
 Route::post('/deleteFile', [FileUpload::class, 'deleteFile']);
 Route::post('/productImageUpload', [productImagesController::class, 'productImageUpload']);
-
 
 // Doctors 
 Route::apiResource('doctors', DoctorController::class);

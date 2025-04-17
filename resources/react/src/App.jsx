@@ -7,6 +7,9 @@ import Navbar from "./componants/Navbar"
 import DoctorNearby from "./pages/DoctorNearby"
 import CustomerLogin from "./pages/CustomerLogin"
 import Cart from "./pages/Cart"
+import PrescriptionUpload from "./pages/PrescriptionUpload"
+import BuyPage from "./pages/BuyPage"
+import Address from "./pages/Address"
 
 function App() {
 
@@ -24,6 +27,9 @@ function App() {
         <Route path="/nearbyDoctors" element={<DoctorNearby/>} />
         <Route path="/login" element={<CustomerLogin/>} />
         <Route path="/cart" element={<Cart/>} />
+        <Route path="/buyPage" element={<BuyPage/>} />
+        <Route path="/prescriptionUpload" element={<PrescriptionUpload/>} />
+        <Route path="/address" element={<Address/>} />
         </Routes>
        </HashRouter>
        </Provider>

@@ -30,3 +30,7 @@ export function getUserType() {
   const userData = JSON.parse(sessionStorage.getItem('userData'))
   return userData ? userData.user.type : null
 }
+export function getUser() {
+  const userData = JSON.parse(sessionStorage.getItem('userData'))
+  return userData? userData.user:null
+}

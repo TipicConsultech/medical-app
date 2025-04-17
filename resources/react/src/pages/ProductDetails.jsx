@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import { Link, useParams } from 'react-router-dom';
-import { getAPICall } from '../util/api';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { getAPICall, post } from '../util/api';
+import { getUser, isLogIn } from '../util/session';
  
 const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -11,6 +12,18 @@ const ProductDetail = () => {
   const [productPrice,setProductPrice]=useState(0);
   const [discountPrice,setDiscountPrice]=useState(0);
   const { id } = useParams();
+  const [loginStatus, setLoginStatus] = useState(false);
+  const user= getUser();
+
+  const navigate=useNavigate();
+    useEffect(() => {
+      if (isLogIn()) {
+        setLoginStatus(true);
+      }
+    }, []);
+    const location = useLocation();
+ 
+    
   useEffect(() => {
     const fetchData=async()=>{
       try {
@@ -27,6 +40,24 @@ const ProductDetail = () => {
     // }
     fetchData();
   }, [id]);
+
+  const addCart=async()=>{
+    if(loginStatus===false){
+      navigate(`/login?currntPage=${location.pathname}`);
+    }
+   else if(loginStatus===true){
+    let data= {
+      'customer_id':user.id.toString(),
+      'product_id':id,
+      'qty':quantity
+      }
+      try {
+        const response = await post(`/api/cart`,data);}
+        catch(e){
+          console.log(e);
+        }
+   }
+   }
  
   if (!product) {
     return (
@@ -197,7 +228,9 @@ const ProductDetail = () => {
                     +
 </button>
 </div>
-<button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition duration-150 ease-in-out flex items-center justify-center space-x-2">
+<button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition duration-150 ease-in-out flex items-center justify-center space-x-2"
+onClick={addCart}
+>
 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
 </svg>

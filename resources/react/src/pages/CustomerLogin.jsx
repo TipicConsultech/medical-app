@@ -1,29 +1,47 @@
-import { useState } from "react";
-import { post } from "../util/api";
-import gibliImage from "../assets/gibli.png";
+import { useEffect, useState } from "react";
+import { mobileLogin, post } from "../util/api";
+import loginImage from "../assets/gibli.png";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { isLogIn, storeUserData } from "../util/session";
 
 export default function CustomerLogin() {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [searchParams] = useSearchParams();
+  const previousPage = searchParams.get('currentPage');
+  const navigate=useNavigate();
+
+  
+    
+   useEffect(() => {
+      if (isLogIn()) {
+        navigate('/');
+      }
+    }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-
     try {
-      const response = await post("/api/customerLogin", {
+      const response = await mobileLogin({
         mobile,
         password,
       });
-
-      // If login successful
-      console.log(response.data);
-      alert("Login successful!");
-      // Redirect or store token if needed
-    } catch (err) {
-      setError("Invalid mobile number or password.");
+      console.log(response.user.type===1);
+      
+      if(response.blocked){
+        setError(response.message)
+      }
+      else if(response.user.type===1){
+        storeUserData(response);
+        navigate("/"); 
+      }
+     
+    } catch (error) {
+      setError('Please provide valid email and password');
     }
+
   };
 
   return (
@@ -64,15 +82,15 @@ export default function CustomerLogin() {
           >
             Login
           </button>
-          <button
+          {/* <button
             type="button"
             className="w-full bg-blue-500 text-white py-2 rounded-full hover:bg-blue-600 transition"
           >
             Sign Up
-          </button>
+          </button> */}
         </form>
         </div>
-        <img  src = {gibliImage} className="rounded-lg max-h-60  align-middle justify-center"></img>
+        <img  src = {loginImage} className="rounded-lg max-h-60  align-middle justify-center"></img>
       </div>
     </div>
   );

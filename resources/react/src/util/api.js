@@ -5,6 +5,9 @@ export async function login(data) {
   return await postOrPutData(host + '/api/login', data)
 }
 
+export async function mobileLogin(data) {
+  return await postOrPutData(host + '/api/mobileLogin', data)
+}
 export async function register(data) {
   return await postOrPutData(host + '/api/register', data)
 }
